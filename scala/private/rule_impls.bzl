@@ -460,11 +460,17 @@ def _compile_or_empty(
 
         # build ijar if needed
         if buildijar:
-            ijar = java_common.run_ijar(
-                ctx.actions,
-                jar = ctx.outputs.jar,
-                target_label = ctx.label,
-                java_toolchain = find_java_toolchain(ctx, ctx.attr._java_toolchain),
+            ijar = ctx.actions.declare_file('%s-ijar.jar' % ctx.label.name)
+
+            cp = depset(items=ctx.files._bootclasspath, transitive=[jars])
+            rsc = ctx.file._rsc_native_image
+
+            ctx.actions.run(
+                outputs = [ijar],
+                inputs = depset(items=sources + [rsc], transitive=[cp]),
+                executable = rsc,
+                arguments = ["-cp", ":".join([jar.path for jar in cp]), "-d", ijar.path] + [source.path for source in sources],
+                progress_message = "Generating ijar for %s with rsc" % ctx.label,
             )
         else:
             #  macro code needs to be available at compile-time,

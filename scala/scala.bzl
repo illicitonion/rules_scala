@@ -76,6 +76,16 @@ _implicit_deps = {
         cfg = "host",
         default = Label("@io_bazel_rules_scala//src/java/io/bazel/rulesscala/exe:exe"),
     ),
+    "_bootclasspath": attr.label(
+	cfg = "host",
+	default = Label("@bazel_tools//tools/jdk:bootclasspath"),
+    ),
+    "_rsc_native_image": attr.label(
+	default = Label("@rsc_native_image//file"),
+	executable = True,
+	allow_single_file = True,
+	cfg = "host",
+    ),
 }
 
 # Single dep to allow IDEs to pickup all the implicit dependencies.
@@ -576,6 +586,13 @@ def scala_repositories(
     native.bind(
         name = "io_bazel_rules_scala/dependency/scala/guava",
         actual = "@io_bazel_rules_scala_guava",
+    )
+
+    http_file(
+	name = "rsc_native_image",
+	urls = ["https://illicitonion.github.io/hosted_rsc/rsc_2.12-0.0.0-780-e57a1c9c"],
+	sha256 = "70cda2822a8df18f063a8035aa93ebe754ad61f0b44adb7bb437029b567d7ad6",
+	executable = True,
     )
 
 def _sanitize_string_for_usage(s):
