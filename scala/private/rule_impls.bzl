@@ -150,6 +150,7 @@ def compile_scala(
         output,
         manifest,
         statsfile,
+        diagnosticsfile,
         sources,
         cjars,
         all_srcjars,
@@ -259,6 +260,7 @@ SourceJars: {srcjars}
 DependencyAnalyzerMode: {dependency_analyzer_mode}
 UnusedDependencyCheckerMode: {unused_dependency_checker_mode}
 StatsfileOutput: {statsfile_output}
+DiagnosticsFile: {diagnostics_output}
 """.format(
         out = output.path,
         manifest = manifest.path,
@@ -282,6 +284,7 @@ StatsfileOutput: {statsfile_output}
         dependency_analyzer_mode = dependency_analyzer_mode,
         unused_dependency_checker_mode = unused_dependency_checker_mode,
         statsfile_output = statsfile.path,
+        diagnostics_output = diagnosticsfile.path,
     )
 
     argfile = ctx.actions.declare_file(
@@ -298,7 +301,7 @@ StatsfileOutput: {statsfile_output}
         tools = [scalac],
     )
 
-    outs = [output, statsfile]
+    outs = [output, statsfile, diagnosticsfile]
     ins = (
         compiler_classpath_jars.to_list() + all_srcjars.to_list() + list(sources) +
         plugins_list + internal_plugin_jars + classpath_resources + resources +
@@ -332,6 +335,7 @@ StatsfileOutput: {statsfile_output}
             "--jvm_flag=%s" % f
             for f in expand_location(ctx, final_scalac_jvm_flags)
         ] + ["@" + argfile.path],
+	diagnostics_file = diagnosticsfile,
     )
 
 def _interim_java_provider_for_java_compilation(scala_output):
@@ -462,6 +466,7 @@ def compile_or_empty(
             ctx.outputs.jar,
             manifest,
             ctx.outputs.statsfile,
+            ctx.outputs.diagnosticsfile,
             sources,
             jars,
             all_srcjars,

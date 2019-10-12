@@ -1,5 +1,6 @@
 package io.bazel.rulesscala.scalac;
 
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class CompileOptions {
   public final String unusedDependencyCheckerMode;
   public final String currentTarget;
   public final String statsfile;
+  public final /*@Nullable*/ String diagnosticsFile;
 
   public CompileOptions(List<String> args) {
     Map<String, String> argMap = buildArgMap(args);
@@ -65,6 +67,7 @@ public class CompileOptions {
     currentTarget = getOrElse(argMap, "CurrentTarget", "NA");
 
     statsfile = getOrError(argMap, "StatsfileOutput", "Missing required arg StatsfileOutput");
+    diagnosticsFile = getOrElse(argMap, "DiagnosticsFile", null);
   }
 
   private static Map<String, Resource> getResources(Map<String, String> args) {

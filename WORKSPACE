@@ -234,3 +234,12 @@ scala_maven_import_external(
         "https://repo.maven.apache.org/maven2/",
     ],
 )
+
+maven_jar(
+    name = "com_illicitonion_scalac_composite_reporter",
+    artifact = scala_mvn_artifact(
+        "com.illicitonion:scalac-composite-reporter:0.0.1",
+        default_scala_major_version(),
+    ),
+    sha256 = "9e3655fa282adbc6686805d9a745131f18819a15402b20d08fb39253f3b5a5aa",
+)
